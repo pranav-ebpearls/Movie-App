@@ -8,6 +8,7 @@
 import UIKit
 
 class MainViewController: UIViewController {
+    
     private var movieList: [Movie] = [] {
         didSet {
             tableView.reloadData()

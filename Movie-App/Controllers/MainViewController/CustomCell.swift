@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class CustomCell: UITableViewCell {
     
@@ -22,6 +23,8 @@ class CustomCell: UITableViewCell {
     
     let movieTitleLabel: UILabel = {
         let title = UILabel()
+        title.adjustsFontSizeToFitWidth = true
+        title.minimumScaleFactor = 0.5
         title.textColor = .black
         title.textAlignment = .left
         title.font = .systemFont(ofSize: 18, weight: .medium)
@@ -57,9 +60,16 @@ class CustomCell: UITableViewCell {
         ])
     }
     
+    
+    
     func configure(with movie: Movie) {
+        
+        if let url = URL(string: "https://image.tmdb.org/t/p/w185\(movie.posterPath)"){
+            DispatchQueue.main.async {
+                self.movieImage.kf.setImage(with: url)
+            }
+        }
         movieTitleLabel.text = movie.originalTitle
-//        movieImage.image = contents.image
     }
 }
 
