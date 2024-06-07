@@ -29,29 +29,15 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
+        tableView.delegate = self
         tableView.dataSource = self
         
         view.backgroundColor = .white
         self.title = "Movie App"
 
         setupUI()
-        
-        
-//        movieData.completeURL()
-//        
-//        movieData.jsonDataClosure = { [weak self] title in
-//            guard let self = self else {return}
-//            self.contents.append(title)
-//            DispatchQueue.main.async {
-//                self.tableView.reloadData()
-//            }
-//            
-//        }
-        
-        getPopularMovies()
-        
-        
+        getPopularMovies()     
     }
     
     private func setupUI() {
@@ -89,6 +75,16 @@ extension MainViewController: UITableViewDataSource {
     }
 }
 
+extension MainViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let task = movieList[indexPath.row]
+        let detailsVC = DetailsViewController(movieId: task.id)
+        navigationController?.pushViewController(detailsVC, animated: true)
+    }
+}
+
+
 // MARK: - API Calls
 extension MainViewController {
     private func getPopularMovies() {
@@ -99,8 +95,8 @@ extension MainViewController {
             guard let self = self else {return}
             
             let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
-        })
+             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+             self.present(alert, animated: true, completion: nil)
+         })
     }
 }

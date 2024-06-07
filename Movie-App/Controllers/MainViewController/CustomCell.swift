@@ -13,10 +13,13 @@ class CustomCell: UITableViewCell {
     static let identifier = "CustomCell"
     
     let movieImage: UIImageView = {
-        let image = UIImage(named: "batman-poster")
+        let image = UIImage(named: "noImage")
         let imgView = UIImageView(image: image)
         imgView.contentMode = .scaleAspectFit
         imgView.clipsToBounds = true
+        imgView.layer.cornerRadius = 10
+        imgView.layer.borderColor = UIColor.opaqueSeparator.cgColor
+        imgView.layer.borderWidth = 2
         imgView.translatesAutoresizingMaskIntoConstraints = false
         return imgView
     }()
@@ -53,7 +56,7 @@ class CustomCell: UITableViewCell {
             movieImage.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -16),
             movieImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             movieImage.widthAnchor.constraint(equalToConstant: 100),
-            movieImage.heightAnchor.constraint(equalToConstant: 160),
+            movieImage.heightAnchor.constraint(equalToConstant: 155),
             
             movieTitleLabel.topAnchor.constraint(equalTo: movieImage.topAnchor, constant: 5),
             movieTitleLabel.leadingAnchor.constraint(equalTo: movieImage.trailingAnchor, constant: 16),
