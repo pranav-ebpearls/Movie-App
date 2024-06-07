@@ -24,6 +24,7 @@ class CustomCell: UITableViewCell {
     let movieTitleLabel: UILabel = {
         let title = UILabel()
         title.adjustsFontSizeToFitWidth = true
+        title.numberOfLines = 2
         title.minimumScaleFactor = 0.5
         title.textColor = .black
         title.textAlignment = .left
@@ -52,9 +53,9 @@ class CustomCell: UITableViewCell {
             movieImage.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -16),
             movieImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             movieImage.widthAnchor.constraint(equalToConstant: 100),
-            movieImage.heightAnchor.constraint(equalToConstant: 200),
+            movieImage.heightAnchor.constraint(equalToConstant: 160),
             
-            movieTitleLabel.topAnchor.constraint(equalTo: movieImage.topAnchor, constant: 25),
+            movieTitleLabel.topAnchor.constraint(equalTo: movieImage.topAnchor, constant: 5),
             movieTitleLabel.leadingAnchor.constraint(equalTo: movieImage.trailingAnchor, constant: 16),
             movieTitleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
         ])
@@ -69,7 +70,7 @@ class CustomCell: UITableViewCell {
                 self.movieImage.kf.setImage(with: url)
             }
         }
-        movieTitleLabel.text = movie.originalTitle
+        movieTitleLabel.text = movie.title
     }
 }
 

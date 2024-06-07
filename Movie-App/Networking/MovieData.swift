@@ -8,7 +8,7 @@
 import UIKit
 
 struct AccountData {
-    func getAccountDetail(success: @escaping ((MovieListResult) -> Void), failure: @escaping ((Error) -> Void)) {
+    func getAccountDetail(complete: @escaping ((MovieListResult) -> Void), inComplete: @escaping ((Error) -> Void)) {
         let urlStr = "https://api.themoviedb.org/3/account/21308155"
         let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMDhlZTM0YjEyOWZkYmJlNWNjZjIyMDNjNGJiZWQ5MCIsInN1YiI6IjY2NjEyMzdlYjM5MDY5YjdjNzYwYTVmYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.g0t_FLyFAGhkCFKX4-_euhHch6GKLjriiKRNbejHpNk"
         if let url = URL(string: urlStr) {
@@ -23,32 +23,24 @@ struct AccountData {
             let task = session.dataTask(with: request) { data, response, error in
                 if let error = error {
                     DispatchQueue.main.async {
-                        failure(error)
+                        inComplete(error)
                         return
                     }
                 }
                 if let data = data {
                     let decoder = JSONDecoder()
                     do {
-                        let object = try JSONSerialization.jsonObject(with: data)
-                        let prettyPrintedData = try JSONSerialization.data(
-                            withJSONObject: object,
-                            options: [.prettyPrinted, .sortedKeys]
-                        )
-                        let prettyPrintedString = String(data: prettyPrintedData, encoding: .utf8)!
-                        debugPrint(prettyPrintedString)
-                        
                         let decodedModel = try decoder.decode(MovieListResult.self, from: data)
                         
                         DispatchQueue.main.async{
-                            success(decodedModel)
+                            complete(decodedModel)
                             return
                         }
                     } catch {
                         debugPrint(error)
                         
                         DispatchQueue.main.async {
-                            failure(error)
+                            inComplete(error)
                             return
                         }
                     }
@@ -63,7 +55,7 @@ struct MovieData {
     // async await -> new logic
     
     
-    func getMovieDetail(success: @escaping ((MovieListResult) -> Void), failure: @escaping ((Error) -> Void)) {
+    func getMovieDetail(successfull: @escaping ((MovieListResult) -> Void), notSuccessful: @escaping ((Error) -> Void)) {
         let urlStr = "https://api.themoviedb.org/3/movie/10752?language=en-US"
         let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMDhlZTM0YjEyOWZkYmJlNWNjZjIyMDNjNGJiZWQ5MCIsInN1YiI6IjY2NjEyMzdlYjM5MDY5YjdjNzYwYTVmYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.g0t_FLyFAGhkCFKX4-_euhHch6GKLjriiKRNbejHpNk"
         if let url = URL(string: urlStr) {
@@ -78,32 +70,24 @@ struct MovieData {
             let task = session.dataTask(with: request) { data, response, error in
                 if let error = error {
                     DispatchQueue.main.async {
-                        failure(error)
+                        notSuccessful(error)
                         return
                     }
                 }
                 if let data = data {
                     let decoder = JSONDecoder()
                     do {
-                        let object = try JSONSerialization.jsonObject(with: data)
-                        let prettyPrintedData = try JSONSerialization.data(
-                            withJSONObject: object,
-                            options: [.prettyPrinted, .sortedKeys]
-                        )
-                        let prettyPrintedString = String(data: prettyPrintedData, encoding: .utf8)!
-                        debugPrint(prettyPrintedString)
-                        
                         let decodedModel = try decoder.decode(MovieListResult.self, from: data)
                         
                         DispatchQueue.main.async{
-                            success(decodedModel)
+                            successfull(decodedModel)
                             return
                         }
                     } catch {
                         debugPrint(error)
                         
                         DispatchQueue.main.async {
-                            failure(error)
+                            notSuccessful(error)
                             return
                         }
                     }
@@ -113,7 +97,7 @@ struct MovieData {
         }
     }
     
-    func getNowShowingMovies(success: @escaping ((MovieListResult) -> Void), failure: @escaping ((Error) -> Void)) {
+    func getNowShowingMovies(completed: @escaping ((MovieListResult) -> Void), notCompleted: @escaping ((Error) -> Void)) {
         let urlStr = "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1"
         let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMDhlZTM0YjEyOWZkYmJlNWNjZjIyMDNjNGJiZWQ5MCIsInN1YiI6IjY2NjEyMzdlYjM5MDY5YjdjNzYwYTVmYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.g0t_FLyFAGhkCFKX4-_euhHch6GKLjriiKRNbejHpNk"
         if let url = URL(string: urlStr) {
@@ -128,32 +112,24 @@ struct MovieData {
             let task = session.dataTask(with: request) { data, response, error in
                 if let error = error {
                     DispatchQueue.main.async {
-                        failure(error)
+                        notCompleted(error)
                         return
                     }
                 }
                 if let data = data {
                     let decoder = JSONDecoder()
                     do {
-                        let object = try JSONSerialization.jsonObject(with: data)
-                        let prettyPrintedData = try JSONSerialization.data(
-                            withJSONObject: object,
-                            options: [.prettyPrinted, .sortedKeys]
-                        )
-                        let prettyPrintedString = String(data: prettyPrintedData, encoding: .utf8)!
-                        debugPrint(prettyPrintedString)
-                        
                         let decodedModel = try decoder.decode(MovieListResult.self, from: data)
                         
                         DispatchQueue.main.async{
-                            success(decodedModel)
+                            completed(decodedModel)
                             return
                         }
                     } catch {
                         debugPrint(error)
                         
                         DispatchQueue.main.async {
-                            failure(error)
+                            notCompleted(error)
                             return
                         }
                     }
@@ -164,7 +140,7 @@ struct MovieData {
     }
     
     func getPopularMovies(success: @escaping ((MovieListResult) -> Void), failure: @escaping ((Error) -> Void)) {
-        let urlStr = "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1"
+        let urlStr = "https://api.themoviedb.org/3/movie/popular?language=en-US&page=3"
         let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0Yzg0Y2Y2ZTgxOGY3ZDNjMDlmZDFhYWUwOGU2NjQ0YSIsInN1YiI6IjY2NWVmMWFiMGI3MDJhYWM1M2NjYmQxMyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.2K7gDTHZve0s_vsqo1GsoaUaefoo5X_FqJtGQmZ7-mI"
         
         if let url = URL(string: urlStr) {

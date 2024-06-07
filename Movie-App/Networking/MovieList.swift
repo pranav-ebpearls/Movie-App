@@ -23,12 +23,11 @@ struct MovieListResult: Codable {
 
 struct Movie: Codable {
     var id: Int
-    var originalTitle: String
+    var title: String
     var posterPath: String
     
     enum CodingKeys: String, CodingKey {
-        case id
-        case originalTitle = "original_title"
+        case id, title
         case posterPath = "poster_path"
     }
 }
