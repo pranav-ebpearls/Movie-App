@@ -1,19 +1,14 @@
 //
-//  DetailsViewController.swift
+//  DetailsScreen.swift
 //  Movie-App
 //
-//  Created by ebpearls on 6/7/24.
+//  Created by ebpearls on 6/10/24.
 //
 
 import UIKit
-import Kingfisher
 
-class DetailsViewController: UIViewController {
-    
-    let movieData = MovieData()
-    
-    var spokenLanguage: [Language] = []
-    
+class DetailsScreen: UIView {
+
     let scrollView: UIScrollView = {
         let scollView = UIScrollView()
         scollView.translatesAutoresizingMaskIntoConstraints = false
@@ -25,9 +20,9 @@ class DetailsViewController: UIViewController {
         let imgView = UIImageView(image: image)
         imgView.contentMode = .scaleAspectFit
         imgView.clipsToBounds = true
-        imgView.layer.cornerRadius = 30
-        imgView.layer.borderColor = UIColor.opaqueSeparator.cgColor
-        imgView.layer.borderWidth = 3
+        imgView.layer.cornerRadius = 35
+        imgView.layer.borderColor = UIColor.white.cgColor
+        imgView.layer.borderWidth = 20
         imgView.translatesAutoresizingMaskIntoConstraints = false
         return imgView
     }()
@@ -36,7 +31,9 @@ class DetailsViewController: UIViewController {
         let runtime = UILabel()
         runtime.textColor = .black
         runtime.textAlignment = .center
-        runtime.font = .systemFont(ofSize: 16, weight: .light)
+        if let customFont = UIFont(name: "Calibri", size: 20) {
+            runtime.font = customFont
+        }
         runtime.text = "Length"
         runtime.translatesAutoresizingMaskIntoConstraints = false
         return runtime
@@ -47,7 +44,9 @@ class DetailsViewController: UIViewController {
         runtime.textColor = .black
         runtime.textAlignment = .center
         runtime.backgroundColor = UIColor(red: 0.7, green: 0.9, blue: 1.0, alpha: 1.0)
-        runtime.font = .systemFont(ofSize: 16, weight: .light)
+        if let customFont = UIFont(name: "Calibri", size: 20) {
+            runtime.font = customFont
+        }
         runtime.clipsToBounds = true
         runtime.text = "Length"
         runtime.translatesAutoresizingMaskIntoConstraints = false
@@ -59,7 +58,9 @@ class DetailsViewController: UIViewController {
         let language = UILabel()
         language.textColor = .black
         language.textAlignment = .center
-        language.font = .systemFont(ofSize: 16, weight: .light)
+        if let customFont = UIFont(name: "Calibri", size: 20) {
+            language.font = customFont
+        }
         language.text = "Language"
         language.translatesAutoresizingMaskIntoConstraints = false
         return language
@@ -71,8 +72,9 @@ class DetailsViewController: UIViewController {
         language.textAlignment = .center
         language.backgroundColor = UIColor(red: 0.7, green: 0.9, blue: 1.0, alpha: 1.0)
         language.clipsToBounds = true
-        language.font = .systemFont(ofSize: 16, weight: .light)
-        language.text = "Language"
+        if let customFont = UIFont(name: "Calibri", size: 20) {
+            language.font = customFont
+        }
         language.layer.cornerRadius = 10
         language.translatesAutoresizingMaskIntoConstraints = false
         return language
@@ -98,7 +100,9 @@ class DetailsViewController: UIViewController {
         detailLabel.minimumScaleFactor = 0.5
         detailLabel.textColor = .black
         detailLabel.textAlignment = .justified
-        detailLabel.font = .systemFont(ofSize: 18, weight: .light)
+        if let customFont = UIFont(name: "Calibri", size: 20) {
+            detailLabel.font = customFont
+        }
         detailLabel.text = "Movie Description"
         detailLabel.translatesAutoresizingMaskIntoConstraints = false
         return detailLabel
@@ -114,24 +118,37 @@ class DetailsViewController: UIViewController {
         return runtime
     }()
     
-//    let collectionView: UICollectionView {
-//        let collectionView = UICollectionView( frame: <#T##CGRect#>, collectionViewLayout: <#T##UICollectionViewLayout#>)
-//    }
+    let castLabel: UILabel = {
+        let runtime = UILabel()
+        runtime.textColor = .black
+        runtime.textAlignment = .left
+        runtime.font = .systemFont(ofSize: 25, weight: .semibold)
+        runtime.text = "Cast"
+        runtime.translatesAutoresizingMaskIntoConstraints = false
+        return runtime
+    }()
     
+    let collectionView: UICollectionView = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.backgroundColor = .clear
+        collection.register(CollectionCell.self, forCellWithReuseIdentifier: CollectionCell.identifier)
+        collection.translatesAutoresizingMaskIntoConstraints = false
+        return collection
+    }()
     
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor  = .white
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupUI()
-        getMovieDetails()
     }
     
-
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
         
-    func setupUI() {
-        view.addSubview(scrollView)
+    private func setupUI() {
+        addSubview(scrollView)
         scrollView.addSubview(imgView)
         scrollView.addSubview(titleLabel)
         scrollView.addSubview(descriptionLabel)
@@ -140,20 +157,21 @@ class DetailsViewController: UIViewController {
         scrollView.addSubview(actualRuntimeLabel)
         scrollView.addSubview(actualLanguageLabel)
         scrollView.addSubview(overviewLabel)
-        
+        scrollView.addSubview(collectionView)
+        scrollView.addSubview(castLabel)
         
                 
         NSLayoutConstraint.activate([
-            scrollView.topAnchor.constraint(equalTo: view.topAnchor),
-            scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            scrollView.topAnchor.constraint(equalTo: topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
             imgView.topAnchor.constraint(equalTo: scrollView.topAnchor),
             imgView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             imgView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             imgView.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height * 0.65),
-            imgView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            imgView.widthAnchor.constraint(equalTo: widthAnchor),
             
             titleLabel.topAnchor.constraint(equalTo: imgView.bottomAnchor, constant: 5),
             titleLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 15),
@@ -182,19 +200,17 @@ class DetailsViewController: UIViewController {
             descriptionLabel.topAnchor.constraint(equalTo: overviewLabel.bottomAnchor, constant: 5),
             descriptionLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 15),
             descriptionLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -15),
-            descriptionLabel.bottomAnchor.constraint(lessThanOrEqualTo: scrollView.bottomAnchor)
+            
+            castLabel.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 15),
+            castLabel.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 15),
+            castLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -15),
+            
+            collectionView.heightAnchor.constraint(equalToConstant: 150),
+            collectionView.widthAnchor.constraint(equalToConstant: 380),
+            collectionView.topAnchor.constraint(equalTo: castLabel.bottomAnchor, constant: 5),
+            collectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 15),
+            collectionView.bottomAnchor.constraint(lessThanOrEqualTo: scrollView.bottomAnchor)
         ])
-    }
-    
-    private var movieId: Int
-    
-    init (movieId: Int) {
-        self.movieId = movieId
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     func configure(with movie: MovieDetail) {
@@ -206,43 +222,5 @@ class DetailsViewController: UIViewController {
         titleLabel.text = movie.title
         descriptionLabel.text = movie.overview
     }
-    
-    
-}
 
-extension DetailsViewController {
-    func getMovieDetails() {
-        movieData.getMovieDetail(movieId: movieId) { [weak self] movieDetailResult in
-            guard let self = self else {return}
-            DispatchQueue.main.async {
-                self.navigationController?.title = movieDetailResult.title
-                self.titleLabel.text = movieDetailResult.title
-                self.descriptionLabel.text = movieDetailResult.overview
-                self.actualRuntimeLabel.text = "\(movieDetailResult.runtime) min"
-                self.spokenLanguage = movieDetailResult.spokenLanguages
-                for mo in self.spokenLanguage {
-                    self.actualLanguageLabel.text = "\(mo.englishName)"
-                }
-                
-//                convert array into string
-//                component separator
-//                
-//                "Nepali, English, Germany"
-            }
-            if let url = URL(string: "https://image.tmdb.org/t/p/original\(movieDetailResult.posterPath)"){
-                DispatchQueue.main.async {
-                    self.imgView.kf.setImage(with: url)
-                }
-            }
-            
-        } notSuccessful: { [weak self] error in
-            guard let self = self else {return}
-            
-            let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-             self.present(alert, animated: true, completion: nil)
-        }
-    }
-    
 }
-

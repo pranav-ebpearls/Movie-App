@@ -9,49 +9,40 @@ import UIKit
 
 class MainViewController: UIViewController {
     
+    // MARK: - Properties
+    
     private var movieList: [Movie] = [] {
         didSet {
-            tableView.reloadData()
+            screenView.tableView.reloadData()
         }
     }
     
     let movieData = MovieData()
     
-    let tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.backgroundColor = .clear
-        tableView.allowsSelection = true
-        tableView.register(CustomCell.self, forCellReuseIdentifier: CustomCell.identifier)
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        return tableView
-    }()
+    // MARK: - UI Components
+    
+    lazy var screenView: MainScreen = MainScreen()
+    
+    override func loadView() {
+        super.loadView()
+        view = screenView
+    }
+    
+    // MARK: - Life Cycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.delegate = self
-        tableView.dataSource = self
+        screenView.tableView.delegate = self
+        screenView.tableView.dataSource = self
         
         view.backgroundColor = .white
         self.title = "Movie App"
-
-        setupUI()
         getPopularMovies()     
     }
-    
-    private func setupUI() {
-        view.addSubview(tableView)
-        
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
-    }
-    
 }
+
+// MARK: - TableView Data Source
 
 extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -64,9 +55,7 @@ extension MainViewController: UITableViewDataSource {
         }
         
         let movie = movieList[indexPath.row]
-        
         cell.configure(with: movie)
-        
         return cell
     }
     
@@ -74,6 +63,8 @@ extension MainViewController: UITableViewDataSource {
         "Popular Movies"
     }
 }
+
+// MARK: - Table View Delegate
 
 extension MainViewController: UITableViewDelegate {
     
@@ -86,6 +77,7 @@ extension MainViewController: UITableViewDelegate {
 
 
 // MARK: - API Calls
+
 extension MainViewController {
     private func getPopularMovies() {
         movieData.getPopularMovies(success: { [weak self] movieListResult in

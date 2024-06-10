@@ -1,19 +1,14 @@
 //
-//  ProfileViewController.swift
+//  ProfileScreen.swift
 //  Movie-App
 //
-//  Created by ebpearls on 6/7/24.
+//  Created by ebpearls on 6/10/24.
 //
 
 import UIKit
 
-class ProfileViewController: UIViewController {
-    
-    let accountData = AccountData()
-    
-    var avat: Avatar?
-    var movieDB: ImgPath?
-    
+class ProfileScreen: UIView {
+
     let imgView: UIImageView = {
         let image = UIImage(named: "noImage")
         let imgView = UIImageView(image: image)
@@ -24,17 +19,7 @@ class ProfileViewController: UIViewController {
         imgView.translatesAutoresizingMaskIntoConstraints = false
         return imgView
     }()
-    
-    func makeCircularImageView() {
-        imgView.layer.cornerRadius = imgView.frame.size.width / 2
-        imgView.layer.masksToBounds = true
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        makeCircularImageView()
-    }
-    
+ 
     let nameLabel: UILabel = {
         let title = UILabel()
         title.adjustsFontSizeToFitWidth = true
@@ -86,9 +71,7 @@ class ProfileViewController: UIViewController {
         title.translatesAutoresizingMaskIntoConstraints = false
         return title
     }()
-    
-    
-    
+
     let labelsStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
@@ -98,12 +81,13 @@ class ProfileViewController: UIViewController {
         return stackView
     }()
     
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         setupUI()
-        getAccountDetails()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func setupUI() {
@@ -112,48 +96,19 @@ class ProfileViewController: UIViewController {
         labelsStackView.addArrangedSubview(usernameLabel)
         labelsStackView.addArrangedSubview(actualUsernameLabel)
         
+        addSubview(imgView)
+        addSubview(labelsStackView)
         
-        view.addSubview(imgView)
-        view.addSubview(labelsStackView)
         NSLayoutConstraint.activate([
-            imgView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imgView.centerXAnchor.constraint(equalTo: centerXAnchor),
             imgView.widthAnchor.constraint(equalToConstant: 150),
             imgView.heightAnchor.constraint(equalToConstant: 150),
-            imgView.topAnchor.constraint(equalTo: view.topAnchor, constant: 110),
+            imgView.topAnchor.constraint(equalTo: topAnchor, constant: 110),
             
-            // Stack View
-            labelsStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            labelsStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             labelsStackView.topAnchor.constraint(equalTo: imgView.bottomAnchor, constant: 70),
-            labelsStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 30),
+            labelsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
         ])
     }
-}
-    
-extension ProfileViewController {
-    func getAccountDetails() {
-        accountData.getAccountDetail { [weak self] accData in
-            guard let self = self else {return}
-            DispatchQueue.main.async {
-                self.actualNameLabel.text = accData.name
-                self.actualUsernameLabel.text = accData.username
-            }
-            avat = accData.avatar
-            movieDB = self.avat?.tmdb
-            if let url = URL(string: "https://image.tmdb.org/t/p/w185\(String(describing: movieDB!.avatarPath))"){
-                DispatchQueue.main.async {
-                    self.imgView.kf.setImage(with: url)
-                }
-            }
-        } inComplete: { [weak self] error in
-            guard let self = self else {return}
-            
-            let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-             self.present(alert, animated: true, completion: nil)
-        }
-        
-        
-    }
-}
-    
 
+}

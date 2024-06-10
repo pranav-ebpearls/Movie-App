@@ -51,10 +51,52 @@ struct AccountData {
     }
 }
 
+struct CastDetails {
+    func getCastDetails(movieId: Int, succeed: @escaping ((CastList) -> Void), fail: @escaping ((Error) -> Void)) {
+        let urlStr = "https://api.themoviedb.org/3/movie/\(movieId)/credits?language=en-US"
+        let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMDhlZTM0YjEyOWZkYmJlNWNjZjIyMDNjNGJiZWQ5MCIsInN1YiI6IjY2NjEyMzdlYjM5MDY5YjdjNzYwYTVmYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.g0t_FLyFAGhkCFKX4-_euhHch6GKLjriiKRNbejHpNk"
+        if let url = URL(string: urlStr) {
+            var request = URLRequest(url: url)
+            request.httpMethod = "GET"
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.timeoutInterval = 60.0
+            
+            let session = URLSession.shared
+            
+            let task = session.dataTask(with: request) { data, response, error in
+                if let error = error {
+                    DispatchQueue.main.async {
+                        fail(error)
+                    }
+                }
+                if let data = data {
+
+                    
+                    let decoder = JSONDecoder()
+                    do {
+                        
+                        let decodedModel = try decoder.decode(CastList.self, from: data)
+                        DispatchQueue.main.async {
+                            succeed(decodedModel)
+                            return
+                        }
+                    } catch {
+                        debugPrint(error)
+                        DispatchQueue.main.async {
+                            fail(error)
+                            return
+                        }
+                    }
+                }
+            }
+            task.resume()
+        }
+    }
+}
+
 struct MovieData {
     // async await -> new logic
-    
-    
     func getMovieDetail(movieId: Int, successfull: @escaping ((MovieDetail) -> Void), notSuccessful: @escaping ((Error) -> Void)) {
         let urlStr = "https://api.themoviedb.org/3/movie/\(movieId)?language=en-US"
         let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMDhlZTM0YjEyOWZkYmJlNWNjZjIyMDNjNGJiZWQ5MCIsInN1YiI6IjY2NjEyMzdlYjM5MDY5YjdjNzYwYTVmYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.g0t_FLyFAGhkCFKX4-_euhHch6GKLjriiKRNbejHpNk"
@@ -77,6 +119,7 @@ struct MovieData {
                 if let data = data {
                     let decoder = JSONDecoder()
                     do {
+                        
                         let decodedModel = try decoder.decode(MovieDetail.self, from: data)
                         
                         DispatchQueue.main.async{
@@ -140,7 +183,7 @@ struct MovieData {
     }
     
     func getPopularMovies(success: @escaping ((MovieListResult) -> Void), failure: @escaping ((Error) -> Void)) {
-        let urlStr = "https://api.themoviedb.org/3/movie/popular?language=en-US&page=3"
+        let urlStr = "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1"
         let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0Yzg0Y2Y2ZTgxOGY3ZDNjMDlmZDFhYWUwOGU2NjQ0YSIsInN1YiI6IjY2NWVmMWFiMGI3MDJhYWM1M2NjYmQxMyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.2K7gDTHZve0s_vsqo1GsoaUaefoo5X_FqJtGQmZ7-mI"
         
         if let url = URL(string: urlStr) {

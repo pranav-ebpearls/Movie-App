@@ -25,9 +25,13 @@ struct Movie: Codable {
     var id: Int
     var title: String
     var posterPath: String
-    
+    var voteAverage: Double
+    var genreIds: [Int]
+
     enum CodingKeys: String, CodingKey {
         case id, title
         case posterPath = "poster_path"
+        case voteAverage = "vote_average"
+        case genreIds = "genre_ids"
     }
 }
