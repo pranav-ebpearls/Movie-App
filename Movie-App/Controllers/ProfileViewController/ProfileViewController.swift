@@ -40,6 +40,11 @@ class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+//        getAccountDetails()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         getAccountDetails()
     }
 }
@@ -48,25 +53,21 @@ class ProfileViewController: UIViewController {
     
 extension ProfileViewController {
     func getAccountDetails() {
-//        accountData.getAccountDetail { [weak self] accData in
-//            guard let self = self else {return}
-//            DispatchQueue.main.async {
-//                self.screenView.actualNameLabel.text = accData.name
-//                self.screenView.actualUsernameLabel.text = accData.username
-//            }
-//            avat = accData.avatar
-//            movieDB = self.avat?.tmdb
-//            if let url = URL(string: "https://image.tmdb.org/t/p/w185\(String(describing: movieDB!.avatarPath))") {
-//                DispatchQueue.main.async {
-//                    self.screenView.imgView.kf.setImage(with: url)
-//                }
-//            }
-//        } inComplete: { [weak self] error in
-//            guard let self = self else {return}
-//            
-//            let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-//             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-//             self.present(alert, animated: true, completion: nil)
-//        }
+        Task {
+            do {
+                let account = try await MovieData().load(ImgPath.account)
+                screenView.actualNameLabel.text = account.name
+                screenView.actualUsernameLabel.text = account.username
+                avat = account.avatar
+                movieDB = avat?.tmdb
+                if let url = URL(string: "https://image.tmdb.org/t/p/w185\(String(describing: movieDB!.avatarPath)))") {
+                    DispatchQueue.main.async {
+                        self.screenView.imgView.kf.setImage(with: url)
+                    }
+                }
+            } catch {
+                print("Error loading account details: \(error)")
+            }
+        }
     }
 }

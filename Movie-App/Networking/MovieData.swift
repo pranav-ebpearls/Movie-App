@@ -7,52 +7,6 @@
 
 import UIKit
 
-//struct AccountData {
-//    func getAccountDetail(complete: @escaping ((AccountDatas) -> Void), inComplete: @escaping ((Error) -> Void)) {
-//        let urlStr = "https://api.themoviedb.org/3/account/21308155"
-//        // swiftlint:disable:next line_length
-//        let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0Yzg0Y2Y2ZTgxOGY3ZDNjMDlmZDFhYWUwOGU2NjQ0YSIsInN1YiI6IjY2NWVmMWFiMGI3MDJhYWM1M2NjYmQxMyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.2K7gDTHZve0s_vsqo1GsoaUaefoo5X_FqJtGQmZ7-mI"
-//        if let url = URL(string: urlStr) {
-//            var request = URLRequest(url: url)
-//            request.httpMethod = "GET"
-//            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-//            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-//            request.timeoutInterval = 60.0
-//            
-//            let session = URLSession.shared
-//            
-//            let task = session.dataTask(with: request) { data, _, error in
-//                if let error = error {
-//                    DispatchQueue.main.async {
-//                        inComplete(error)
-//                        return
-//                    }
-//                }
-//                if let data = data {
-//                    let decoder = JSONDecoder()
-//                    do {
-//                        let decodedModel = try decoder.decode(AccountDatas.self, from: data)
-//                        
-//                        DispatchQueue.main.async {
-//                            complete(decodedModel)
-//                            return
-//                        }
-//                    } catch {
-//                        debugPrint(error)
-//                        
-//                        DispatchQueue.main.async {
-//                            inComplete(error)
-//                            return
-//                        }
-//                    }
-//                }
-//            }
-//            task.resume()
-//        }
-//    }
-//}
-
-
 enum NetworkError: Error {
     case invalidResponse
     case badURL
@@ -124,10 +78,7 @@ extension URL {
         components.scheme = "https"
         components.host = "api.themoviedb.org"
         components.path = "/3/account/21308155"
-        components.queryItems = [
-            URLQueryItem(name: "language", value: "en-US"),
-            URLQueryItem(name: "page", value: "1")
-        ]
+
         guard let url = components.url else {
             fatalError("Invalid URL components")
         }
@@ -182,9 +133,16 @@ extension Cast {
     }
 }
 
+extension ImgPath {
+    static var account: Resource<AccountDatas> {
+        return Resource(url: URL.getAccountDetails)
+    }
+}
+
 class MovieData {
+    
     // swiftlint:disable:next line_length
-    let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMDhlZTM0YjEyOWZkYmJlNWNjZjIyMDNjNGJiZWQ5MCIsInN1YiI6IjY2NjEyMzdlYjM5MDY5YjdjNzYwYTVmYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.g0t_FLyFAGhkCFKX4-_euhHch6GKLjriiKRNbejHpNk"
+    let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0Yzg0Y2Y2ZTgxOGY3ZDNjMDlmZDFhYWUwOGU2NjQ0YSIsInN1YiI6IjY2NWVmMWFiMGI3MDJhYWM1M2NjYmQxMyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.2K7gDTHZve0s_vsqo1GsoaUaefoo5X_FqJtGQmZ7-mI"
     
     func load<T: Codable>(_ resource: Resource<T>) async throws -> T {
         var request = URLRequest(url: resource.url)
@@ -209,6 +167,13 @@ class MovieData {
         
         let (data, response) = try await session.data(for: request)
         
+        if let json = try? JSONSerialization.jsonObject(with: data, options: .mutableContainers),
+           let jsonData = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted) {
+            print(String(decoding: jsonData, as: UTF8.self))
+        } else {
+            print("json data malformed")
+        }
+        
         guard let httpResponse = response as? HTTPURLResponse,
               httpResponse.statusCode == 200 else {
             throw NetworkError.invalidResponse
@@ -221,6 +186,3 @@ class MovieData {
         return result
     }
 }
-
-
-

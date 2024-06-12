@@ -10,7 +10,7 @@ import Foundation
 struct AccountDatas: Codable {
     var name: String
     var username: String
-    var avatar: Avatar
+    var avatar: Avatar?
 }
 
 struct Avatar: Codable {
@@ -18,7 +18,8 @@ struct Avatar: Codable {
 }
 
 struct ImgPath: Codable {
-    var avatarPath: String
+    var avatarPath: String?
+    
     enum CodingKeys: String, CodingKey {
         case avatarPath = "avatar_path"
     }
