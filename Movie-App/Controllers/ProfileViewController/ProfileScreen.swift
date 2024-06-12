@@ -107,7 +107,7 @@ class ProfileScreen: UIView {
             
             labelsStackView.centerXAnchor.constraint(equalTo: centerXAnchor),
             labelsStackView.topAnchor.constraint(equalTo: imgView.bottomAnchor, constant: 70),
-            labelsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30),
+            labelsStackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 30)
         ])
     }
 

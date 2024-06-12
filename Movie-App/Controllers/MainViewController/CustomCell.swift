@@ -70,6 +70,7 @@ class CustomCell: UITableViewCell {
         genre2.textColor = .black
         genre2.textAlignment = .left
         genre2.font = .systemFont(ofSize: 15, weight: .light)
+        genre2.text = "horror"
         genre2.translatesAutoresizingMaskIntoConstraints = false
         return genre2
     }()
@@ -79,6 +80,7 @@ class CustomCell: UITableViewCell {
         genre3.textColor = .black
         genre3.textAlignment = .left
         genre3.font = .systemFont(ofSize: 15, weight: .light)
+        genre3.text = "horror"
         genre3.translatesAutoresizingMaskIntoConstraints = false
         return genre3
     }()
@@ -131,7 +133,7 @@ class CustomCell: UITableViewCell {
             
             genreID3.topAnchor.constraint(equalTo: movieRating.bottomAnchor, constant: 5),
             genreID3.leadingAnchor.constraint(equalTo: genreID2.trailingAnchor, constant: 16),
-            genreID3.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            genreID3.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
         ])
     }
     
@@ -148,11 +150,31 @@ class CustomCell: UITableViewCell {
         return labelText
     }
     
+    let numberToString = [
+        28: "Action",
+        12: "Adventure",
+        16: "Animation",
+        35: "Comedy",
+        80: "Crime",
+        99: "Documentary",
+        18: "Drama",
+        10751: "Family",
+        14: "Fantasy",
+        36: "History",
+        27: "Horror",
+        10402: "Music",
+        9648: "Mystery",
+        10749: "Romance",
+        878: "Science Fiction",
+        10770: "TV Movie",
+        53: "Thriller",
+        10752: "War",
+        37: "Western"
+    ]
     
-    
-    func configure(with movie: Movie)  {
+    func configure(with movie: Movie) {
         
-        if let url = URL(string: "https://image.tmdb.org/t/p/w185\(movie.posterPath)"){
+        if let url = URL(string: "https://image.tmdb.org/t/p/w185\(movie.posterPath)") {
             DispatchQueue.main.async {
                 self.movieImage.kf.setImage(with: url)
             }
@@ -162,69 +184,38 @@ class CustomCell: UITableViewCell {
         let rating = imageAndLabel(imgName: "star.fill", label: " \(String(format: "%.1f", movie.voteAverage))/10 IMDb")
         movieRating.attributedText = rating
         
+        let genre: [Int] = movie.genreIds
 
+        var genreName = [String]()
         
-//        print(movie.genreIds)
+        for number in genre {
+            if let string = numberToString[number] {
+                genreName.append(string)
+            } else {
+                genreName.append("Unknown")
+            }
+        }
         
-//        var genre: [Int] = movie.genreIds
-//        
-//        var genreName: [String] = [" "]
-//        
-//        
-//        
-//        genreID1.text = genreName[0]
-//        genreID2.text = genreName[1]
-//        genreID3.text = genreName[2]
-//        
-//        for i in 0..<genre.count {
-//            switch genre[i] {
-//            case 28:
-//                genreName.append("Action")
-//            case 12:
-//                genreName.append("Adventure")
-//            case 16:
-//                genreName.append("Animation")
-//            case 35:
-//                genreName.append("Comedy")
-//            case 80:
-//                genreName.append("Crime")
-//            case 99:
-//                genreName.append("Documentary")
-//            case 18:
-//                genreName.append("Drama")
-//            case 10751:
-//                genreName.append("Family")
-//            case 14:
-//                genreName.append("Fantasy")
-//            case 36:
-//                genreName.append("History")
-//            case 27:
-//                genreName.append("Horror")
-//            case 10402:
-//                genreName.append("Music")
-//            case 9648:
-//                genreName.append("Mystery")
-//            case 10749:
-//                genreName.append("Romance")
-//            case 878:
-//                genreName.append("Science Fiction")
-//            case 10770:
-//                genreName.append("TV Movie")
-//            case 53:
-//                genreName.append("Thriller")
-//            case 10752:
-//                genreName.append("War")
-//            case 37:
-//                genreName.append("Western")
-//            default:
-//                genreName.append("Unknown")
-//            }
-//        }
-//        print(genreName)
+        var first: String?
+        var second: String?
+        var third: String?
+        
+        func assignValues(from array: [String]) {
+            if array.indices.contains(0) {
+                first = array[0]
+            }
+            if array.indices.contains(1) {
+                second = array[1]
+            }
+            if array.indices.contains(2) {
+                third = array[2]
+            }
+        }
+        
+        assignValues(from: genreName)
+        
+        genreID1.text = first
+        genreID2.text = second
+        genreID3.text = third
     }
 }
-
-
-
-
-

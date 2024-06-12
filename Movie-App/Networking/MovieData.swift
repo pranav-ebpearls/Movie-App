@@ -7,238 +7,220 @@
 
 import UIKit
 
-struct AccountData {
-    func getAccountDetail(complete: @escaping ((AccountDatas) -> Void), inComplete: @escaping ((Error) -> Void)) {
-        let urlStr = "https://api.themoviedb.org/3/account/21308155"
-        let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0Yzg0Y2Y2ZTgxOGY3ZDNjMDlmZDFhYWUwOGU2NjQ0YSIsInN1YiI6IjY2NWVmMWFiMGI3MDJhYWM1M2NjYmQxMyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.2K7gDTHZve0s_vsqo1GsoaUaefoo5X_FqJtGQmZ7-mI"
-        if let url = URL(string: urlStr) {
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.timeoutInterval = 60.0
-            
-            let session = URLSession.shared
-            
-            let task = session.dataTask(with: request) { data, response, error in
-                if let error = error {
-                    DispatchQueue.main.async {
-                        inComplete(error)
-                        return
-                    }
-                }
-                if let data = data {
-                    let decoder = JSONDecoder()
-                    do {
-                        let decodedModel = try decoder.decode(AccountDatas.self, from: data)
-                        
-                        DispatchQueue.main.async{
-                            complete(decodedModel)
-                            return
-                        }
-                    } catch {
-                        debugPrint(error)
-                        
-                        DispatchQueue.main.async {
-                            inComplete(error)
-                            return
-                        }
-                    }
-                }
-            }
-            task.resume()
-        }
-    }
+//struct AccountData {
+//    func getAccountDetail(complete: @escaping ((AccountDatas) -> Void), inComplete: @escaping ((Error) -> Void)) {
+//        let urlStr = "https://api.themoviedb.org/3/account/21308155"
+//        // swiftlint:disable:next line_length
+//        let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0Yzg0Y2Y2ZTgxOGY3ZDNjMDlmZDFhYWUwOGU2NjQ0YSIsInN1YiI6IjY2NWVmMWFiMGI3MDJhYWM1M2NjYmQxMyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.2K7gDTHZve0s_vsqo1GsoaUaefoo5X_FqJtGQmZ7-mI"
+//        if let url = URL(string: urlStr) {
+//            var request = URLRequest(url: url)
+//            request.httpMethod = "GET"
+//            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+//            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//            request.timeoutInterval = 60.0
+//            
+//            let session = URLSession.shared
+//            
+//            let task = session.dataTask(with: request) { data, _, error in
+//                if let error = error {
+//                    DispatchQueue.main.async {
+//                        inComplete(error)
+//                        return
+//                    }
+//                }
+//                if let data = data {
+//                    let decoder = JSONDecoder()
+//                    do {
+//                        let decodedModel = try decoder.decode(AccountDatas.self, from: data)
+//                        
+//                        DispatchQueue.main.async {
+//                            complete(decodedModel)
+//                            return
+//                        }
+//                    } catch {
+//                        debugPrint(error)
+//                        
+//                        DispatchQueue.main.async {
+//                            inComplete(error)
+//                            return
+//                        }
+//                    }
+//                }
+//            }
+//            task.resume()
+//        }
+//    }
+//}
+
+
+enum NetworkError: Error {
+    case invalidResponse
+    case badURL
+    case decodingError
 }
 
-struct CastDetails {
-    func getCastDetails(movieId: Int, succeed: @escaping ((CastList) -> Void), fail: @escaping ((Error) -> Void)) {
-        let urlStr = "https://api.themoviedb.org/3/movie/\(movieId)/credits?language=en-US"
-        let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMDhlZTM0YjEyOWZkYmJlNWNjZjIyMDNjNGJiZWQ5MCIsInN1YiI6IjY2NjEyMzdlYjM5MDY5YjdjNzYwYTVmYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.g0t_FLyFAGhkCFKX4-_euhHch6GKLjriiKRNbejHpNk"
-        if let url = URL(string: urlStr) {
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.timeoutInterval = 60.0
-            
-            let session = URLSession.shared
-            
-            let task = session.dataTask(with: request) { data, response, error in
-                if let error = error {
-                    DispatchQueue.main.async {
-                        fail(error)
-                    }
-                }
-                if let data = data {
-
-                    
-                    let decoder = JSONDecoder()
-                    do {
-                        
-                        let decodedModel = try decoder.decode(CastList.self, from: data)
-                        DispatchQueue.main.async {
-                            succeed(decodedModel)
-                            return
-                        }
-                    } catch {
-                        debugPrint(error)
-                        DispatchQueue.main.async {
-                            fail(error)
-                            return
-                        }
-                    }
-                }
-            }
-            task.resume()
+extension URL {
+    static var getPopularMovies: URL {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.themoviedb.org"
+        components.path = "/3/movie/popular"
+        components.queryItems = [
+            URLQueryItem(name: "language", value: "en-US"),
+            URLQueryItem(name: "page", value: "1")
+        ]
+        guard let url = components.url else {
+            fatalError("Invalid URL components")
         }
-    }
-}
-
-struct MovieData {
-    // async await -> new logic
-    func getMovieDetail(movieId: Int, successfull: @escaping ((MovieDetail) -> Void), notSuccessful: @escaping ((Error) -> Void)) {
-        let urlStr = "https://api.themoviedb.org/3/movie/\(movieId)?language=en-US"
-        let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMDhlZTM0YjEyOWZkYmJlNWNjZjIyMDNjNGJiZWQ5MCIsInN1YiI6IjY2NjEyMzdlYjM5MDY5YjdjNzYwYTVmYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.g0t_FLyFAGhkCFKX4-_euhHch6GKLjriiKRNbejHpNk"
-        if let url = URL(string: urlStr) {
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.timeoutInterval = 60.0
-            
-            let session = URLSession.shared
-            
-            let task = session.dataTask(with: request) { data, response, error in
-                if let error = error {
-                    DispatchQueue.main.async {
-                        notSuccessful(error)
-                        return
-                    }
-                }
-                if let data = data {
-                    let decoder = JSONDecoder()
-                    do {
-                        
-                        let decodedModel = try decoder.decode(MovieDetail.self, from: data)
-                        
-                        DispatchQueue.main.async{
-                            successfull(decodedModel)
-                            return
-                        }
-                    } catch {
-                        debugPrint(error)
-                        
-                        DispatchQueue.main.async {
-                            notSuccessful(error)
-                            return
-                        }
-                    }
-                }
-            }
-            task.resume()
-        }
+        return url
     }
     
-    func getNowShowingMovies(completed: @escaping ((MovieListResult) -> Void), notCompleted: @escaping ((Error) -> Void)) {
-        let urlStr = "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1"
-        let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMDhlZTM0YjEyOWZkYmJlNWNjZjIyMDNjNGJiZWQ5MCIsInN1YiI6IjY2NjEyMzdlYjM5MDY5YjdjNzYwYTVmYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.g0t_FLyFAGhkCFKX4-_euhHch6GKLjriiKRNbejHpNk"
-        if let url = URL(string: urlStr) {
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            request.timeoutInterval = 60.0
-            
-            let session = URLSession.shared
-            
-            let task = session.dataTask(with: request) { data, response, error in
-                if let error = error {
-                    DispatchQueue.main.async {
-                        notCompleted(error)
-                        return
-                    }
-                }
-                if let data = data {
-                    let decoder = JSONDecoder()
-                    do {
-                        let decodedModel = try decoder.decode(MovieListResult.self, from: data)
-                        
-                        DispatchQueue.main.async{
-                            completed(decodedModel)
-                            return
-                        }
-                    } catch {
-                        debugPrint(error)
-                        
-                        DispatchQueue.main.async {
-                            notCompleted(error)
-                            return
-                        }
-                    }
-                }
-            }
-            task.resume()
+    static var getNowShowingMovies: URL {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.themoviedb.org"
+        components.path = "/3/movie/now_playing"
+        components.queryItems = [
+            URLQueryItem(name: "language", value: "en-US"),
+            URLQueryItem(name: "page", value: "1")
+        ]
+        guard let url = components.url else {
+            fatalError("Invalid URL components")
         }
+        return url
     }
     
-    func getPopularMovies(success: @escaping ((MovieListResult) -> Void), failure: @escaping ((Error) -> Void)) {
-        let urlStr = "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1"
-        let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0Yzg0Y2Y2ZTgxOGY3ZDNjMDlmZDFhYWUwOGU2NjQ0YSIsInN1YiI6IjY2NWVmMWFiMGI3MDJhYWM1M2NjYmQxMyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.2K7gDTHZve0s_vsqo1GsoaUaefoo5X_FqJtGQmZ7-mI"
+    static func getMovieDetails(movieId: Int) -> URL? {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.themoviedb.org"
+        components.path = "/3/movie/\(movieId)"
+        components.queryItems = [
+            URLQueryItem(name: "language", value: "en-US"),
+            URLQueryItem(name: "page", value: "1")
+        ]
+        guard let url = components.url else {
+            fatalError("Invalid URL components")
+        }
+        return url
+    }
         
-        if let url = URL(string: urlStr) {
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.setValue("application/json", forHTTPHeaderField:"Content-Type")
-            request.setValue("Bearer \(token)", forHTTPHeaderField:"Authorization")
-            request.timeoutInterval = 60.0
-            
-            let session = URLSession.shared
-            
-            
-            let task = session.dataTask(with: request) { (data, response, error) in
-                /// failure case
-                if let error = error {
-                    DispatchQueue.main.async {
-                        failure(error)
-                        return
-                    }
-                }
-                
-                /// success case
-                if let data = data {
-                    do {
-                        /// for logging purpose
-                        let object = try JSONSerialization.jsonObject(with: data)
-                        let prettyPrintedData = try JSONSerialization.data(
-                            withJSONObject: object,
-                            options: [.prettyPrinted, .sortedKeys]
-                        )
-                        let prettyPrintedString = String(data: prettyPrintedData, encoding: .utf8)!
-                        debugPrint(prettyPrintedString)
-                        
-                        /// decoding the model
-                        let decoder = JSONDecoder()
-                        
-                        let decodedModel = try decoder.decode(MovieListResult.self, from: data)
-            
-                        DispatchQueue.main.async {
-                            success(decodedModel)
-                            return
-                        }
-                    } catch {
-                        debugPrint(error)
-                        
-                        DispatchQueue.main.async {
-                            failure(error)
-                            return
-                        }
-                    }
-                }
-            }
-            
-            task.resume()
+    static func getCastDetails(movieId: Int) -> URL? {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.themoviedb.org"
+        components.path = "/3/movie/\(movieId)/credits"
+        components.queryItems = [
+            URLQueryItem(name: "language", value: "en-US")
+        ]
+        guard let url = components.url else {
+            fatalError("Invalid URL components")
+        }
+        return url
+    }
+    
+    static var getAccountDetails: URL {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = "api.themoviedb.org"
+        components.path = "/3/account/21308155"
+        components.queryItems = [
+            URLQueryItem(name: "language", value: "en-US"),
+            URLQueryItem(name: "page", value: "1")
+        ]
+        guard let url = components.url else {
+            fatalError("Invalid URL components")
+        }
+        return url
+    }    
+}
+
+enum HttpMethod {
+    case get ([URLQueryItem])
+    case post (Data?)
+    
+    var name: String {
+        switch self {
+        case .get:
+            return "GET"
+        case .post:
+            return "POST"
         }
     }
-
 }
+
+struct Resource<T: Codable> {
+    let url: URL
+    var method: HttpMethod = .get([])
+}
+
+extension Movie {
+    static var popular: Resource<MovieListResult> {
+        return Resource(url: URL.getPopularMovies)
+    }
+    
+    static var nowShowing: Resource<MovieListResult> {
+        return Resource(url: URL.getNowShowingMovies)
+    }
+}
+
+extension Language {
+    static func movieDetailById(id: Int) -> Resource<MovieDetail> {
+        guard let url = URL.getMovieDetails(movieId: id) else {
+            fatalError("Error in ID.")
+        }
+        return Resource(url: url)
+    }
+}
+
+extension Cast {
+    static func getCastById(idNum: Int) -> Resource<CastList> {
+        guard let url = URL.getCastDetails(movieId: idNum) else {
+            fatalError("Error in ID")
+        }
+        return Resource(url: url)
+    }
+}
+
+class MovieData {
+    // swiftlint:disable:next line_length
+    let token = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIyMDhlZTM0YjEyOWZkYmJlNWNjZjIyMDNjNGJiZWQ5MCIsInN1YiI6IjY2NjEyMzdlYjM5MDY5YjdjNzYwYTVmYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.g0t_FLyFAGhkCFKX4-_euhHch6GKLjriiKRNbejHpNk"
+    
+    func load<T: Codable>(_ resource: Resource<T>) async throws -> T {
+        var request = URLRequest(url: resource.url)
+        
+        switch resource.method {
+        case .post(let data):
+            request.httpMethod = resource.method.name
+            request.httpBody = data
+        case .get(let queryItems):
+            var components = URLComponents(url: resource.url, resolvingAgainstBaseURL: false)
+            components?.queryItems = queryItems
+            guard let url = components?.url else {
+                throw NetworkError.badURL
+            }
+            request = URLRequest(url: url)
+        }
+        
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        let session = URLSession.shared
+        
+        let (data, response) = try await session.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw NetworkError.invalidResponse
+        }
+        
+        guard let result = try? JSONDecoder().decode(T.self, from: data) else {
+            throw NetworkError.decodingError
+        }
+        
+        return result
+    }
+}
+
+
+

@@ -9,12 +9,14 @@ import UIKit
 
 class MainScreen: UIView {
 
-
     let tableView: UITableView = {
         let tableView = UITableView()
         tableView.backgroundColor = .clear
         tableView.allowsSelection = true
-        tableView.register(CustomCell.self, forCellReuseIdentifier: CustomCell.identifier)
+        tableView.register(CustomCell.self, forCellReuseIdentifier: CustomCell.identifier) // -> popular
+        tableView.register(
+            CustomCollectinCell.self,
+            forCellReuseIdentifier: CustomCollectinCell.identifier) // -> nowshowing
         tableView.rowHeight = UITableView.automaticDimension
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView

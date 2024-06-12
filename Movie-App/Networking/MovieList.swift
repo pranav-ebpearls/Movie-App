@@ -35,3 +35,5 @@ struct Movie: Codable {
         case genreIds = "genre_ids"
     }
 }
+
+

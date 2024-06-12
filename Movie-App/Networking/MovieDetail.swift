@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 struct MovieDetail: Codable {
     
     var overview: String

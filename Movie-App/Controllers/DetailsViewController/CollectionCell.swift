@@ -29,7 +29,7 @@ class CollectionCell: UICollectionViewCell {
         name.numberOfLines = 5
         name.minimumScaleFactor = 0.5
         name.textColor = .black
-        name.textAlignment = .left
+        name.textAlignment = .center
         name.font = .systemFont(ofSize: 15, weight: .medium)
         name.text = "John Doe"
         name.translatesAutoresizingMaskIntoConstraints = false
@@ -45,7 +45,7 @@ class CollectionCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupUI(){
+    private func setupUI() {
         contentView.addSubview(imageView)
         contentView.addSubview(nameLabel)
         
@@ -68,17 +68,12 @@ class CollectionCell: UICollectionViewCell {
             imageView.image = UIImage(named: "noImage")
 
             } else {
-                if let url = URL(string: "https://image.tmdb.org/t/p/w500\(cast.profilePath!)"){
+                if let url = URL(string: "https://image.tmdb.org/t/p/w500\(cast.profilePath!)") {
                     DispatchQueue.main.async {
                         self.imageView.kf.setImage(with: url)
                     }
             }
-        
-
         }
-
         nameLabel.text = cast.name
-        
     }
-
 }

@@ -8,6 +8,8 @@
 import UIKit
 
 class DetailsScreen: UIView {
+    
+    // MARK: - Properties
 
     let scrollView: UIScrollView = {
         let scollView = UIScrollView()
@@ -138,6 +140,8 @@ class DetailsScreen: UIView {
         return collection
     }()
     
+    // MARK: - Life Cycle
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -146,7 +150,9 @@ class DetailsScreen: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-        
+    
+    // MARK: - UI Layout
+    
     private func setupUI() {
         addSubview(scrollView)
         scrollView.addSubview(imgView)
@@ -160,7 +166,10 @@ class DetailsScreen: UIView {
         scrollView.addSubview(collectionView)
         scrollView.addSubview(castLabel)
         
-                
+        uiLayout()
+    }
+    
+    private func uiLayout() {
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -206,15 +215,17 @@ class DetailsScreen: UIView {
             castLabel.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: -15),
             
             collectionView.heightAnchor.constraint(equalToConstant: 150),
-            collectionView.widthAnchor.constraint(equalToConstant: 380),
             collectionView.topAnchor.constraint(equalTo: castLabel.bottomAnchor, constant: 5),
             collectionView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor, constant: 15),
+            collectionView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor, constant: 15),
             collectionView.bottomAnchor.constraint(lessThanOrEqualTo: scrollView.bottomAnchor)
         ])
     }
     
+    // MARK: - API Call
+    
     func configure(with movie: MovieDetail) {
-        if let url = URL(string: "https://image.tmdb.org/t/p/w185\(movie.posterPath)"){
+        if let url = URL(string: "https://image.tmdb.org/t/p/w185\(movie.posterPath)") {
             DispatchQueue.main.async {
                 self.imgView.kf.setImage(with: url)
             }

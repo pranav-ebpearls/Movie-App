@@ -11,7 +11,7 @@ class ProfileViewController: UIViewController {
     
     // MARK: - Properties
     
-    let accountData = AccountData()
+//    let accountData = AccountData()
     
     var avat: Avatar?
     var movieDB: ImgPath?
@@ -48,27 +48,25 @@ class ProfileViewController: UIViewController {
     
 extension ProfileViewController {
     func getAccountDetails() {
-        accountData.getAccountDetail { [weak self] accData in
-            guard let self = self else {return}
-            DispatchQueue.main.async {
-                self.screenView.actualNameLabel.text = accData.name
-                self.screenView.actualUsernameLabel.text = accData.username
-            }
-            avat = accData.avatar
-            movieDB = self.avat?.tmdb
-            if let url = URL(string: "https://image.tmdb.org/t/p/w185\(String(describing: movieDB!.avatarPath))"){
-                DispatchQueue.main.async {
-                    self.screenView.imgView.kf.setImage(with: url)
-                }
-            }
-        } inComplete: { [weak self] error in
-            guard let self = self else {return}
-            
-            let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
-             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-             self.present(alert, animated: true, completion: nil)
-        }
+//        accountData.getAccountDetail { [weak self] accData in
+//            guard let self = self else {return}
+//            DispatchQueue.main.async {
+//                self.screenView.actualNameLabel.text = accData.name
+//                self.screenView.actualUsernameLabel.text = accData.username
+//            }
+//            avat = accData.avatar
+//            movieDB = self.avat?.tmdb
+//            if let url = URL(string: "https://image.tmdb.org/t/p/w185\(String(describing: movieDB!.avatarPath))") {
+//                DispatchQueue.main.async {
+//                    self.screenView.imgView.kf.setImage(with: url)
+//                }
+//            }
+//        } inComplete: { [weak self] error in
+//            guard let self = self else {return}
+//            
+//            let alert = UIAlertController(title: "Error", message: error.localizedDescription, preferredStyle: .alert)
+//             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+//             self.present(alert, animated: true, completion: nil)
+//        }
     }
 }
-    
-
