@@ -22,6 +22,9 @@ class MainViewController: UIViewController {
         }
     }
     
+    var totalPage = 1
+    var currentPage = 1
+    
     let movieData = MovieData()
     
     // MARK: - UI Components
@@ -43,7 +46,7 @@ class MainViewController: UIViewController {
         
         view.backgroundColor = .white
         self.title = "Movie App"
-        getPopularMovies()
+        getPopularMovies(pageNumber: 1)
         getNowShowingMovies()
     }
 }
@@ -64,6 +67,7 @@ extension MainViewController: UITableViewDataSource {
                 return 0
             }
         } else {
+            
             return popularMovies.count
         }
     }
@@ -82,6 +86,7 @@ extension MainViewController: UITableViewDataSource {
             
             return cell
         } else {
+            
             guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: CustomCell.identifier,
                 for: indexPath) as? CustomCell else {
@@ -93,6 +98,13 @@ extension MainViewController: UITableViewDataSource {
             return cell
         }
         
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if currentPage < totalPage && indexPath.row == popularMovies.count - 1 {
+            currentPage += 1
+            getPopularMovies(pageNumber: currentPage)
+        }
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -134,14 +146,31 @@ extension MainViewController: UITableViewDelegate {
 // MARK: - API Calls
 
 extension MainViewController {
-    private func getPopularMovies() {
+    private func getPopularMovies(pageNumber: Int) {
         Task {
             do {
-                let popular = try await MovieData().load(Movie.popular)
-                popularMovies = popular.results
+                let popular = try await MovieData().load(Movie.popular(pageNo: pageNumber))
+                popularMovies.append(contentsOf: popular.results)
+                totalPage = popular.totalPages ?? 1
             } catch {
                 print("Error loading popular movies: \(error)")
             }
+
+//            do {
+//                let result = try await movieData.newload(Movie.popular(pageNo: pageNumber))
+//                
+//                switch result {
+//                    
+//                case .success(let popular):
+//                    popularMovies.append(contentsOf: popular.results)
+//                    totalPage = popular.totalPages ?? 1
+//                    
+//                case .failure(let error):
+//                    print("Error loading popular movies: \(error)")
+//                }
+//            } catch {
+//                print("Error loading popular movies: \(error)")
+//            }
         }
     }
     

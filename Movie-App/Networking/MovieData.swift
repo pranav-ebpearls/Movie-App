@@ -14,14 +14,14 @@ enum NetworkError: Error {
 }
 
 extension URL {
-    static var getPopularMovies: URL {
+    static func getPopularMovies(pageNum: Int) -> URL? {
         var components = URLComponents()
         components.scheme = "https"
         components.host = "api.themoviedb.org"
         components.path = "/3/movie/popular"
         components.queryItems = [
             URLQueryItem(name: "language", value: "en-US"),
-            URLQueryItem(name: "page", value: "1")
+            URLQueryItem(name: "page", value: "\(pageNum)")
         ]
         guard let url = components.url else {
             fatalError("Invalid URL components")
@@ -106,8 +106,11 @@ struct Resource<T: Codable> {
 }
 
 extension Movie {
-    static var popular: Resource<MovieListResult> {
-        return Resource(url: URL.getPopularMovies)
+    static func popular(pageNo: Int) -> Resource<MovieListResult> {
+        guard let url = URL.getPopularMovies(pageNum: pageNo) else {
+            fatalError("Error in page number.")
+        }
+        return Resource(url: url)
     }
     
     static var nowShowing: Resource<MovieListResult> {
@@ -151,9 +154,9 @@ class MovieData {
         case .post(let data):
             request.httpMethod = resource.method.name
             request.httpBody = data
+            
         case .get(let queryItems):
             var components = URLComponents(url: resource.url, resolvingAgainstBaseURL: false)
-            components?.queryItems = queryItems
             guard let url = components?.url else {
                 throw NetworkError.badURL
             }
@@ -167,12 +170,12 @@ class MovieData {
         
         let (data, response) = try await session.data(for: request)
         
-        if let json = try? JSONSerialization.jsonObject(with: data, options: .mutableContainers),
-           let jsonData = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted) {
-            print(String(decoding: jsonData, as: UTF8.self))
-        } else {
-            print("json data malformed")
-        }
+//        if let json = try? JSONSerialization.jsonObject(with: data, options: .mutableContainers),
+//           let jsonData = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted) {
+//            print(String(decoding: jsonData, as: UTF8.self))
+//        } else {
+//            print("json data malformed")
+//        }
         
         guard let httpResponse = response as? HTTPURLResponse,
               httpResponse.statusCode == 200 else {
@@ -185,4 +188,51 @@ class MovieData {
         
         return result
     }
+    
+    // Using Result Type
+    
+//    func newload<T: Codable>(_ resource: Resource<T>) async throws -> Result<T, Error> {
+//        var request = URLRequest(url: resource.url)
+//        
+//        switch resource.method {
+//        case .post(let data):
+//            request.httpMethod = resource.method.name
+//            request.httpBody = data
+//            
+//        case .get(let queryItems):
+//            var components = URLComponents(url: resource.url, resolvingAgainstBaseURL: false)
+//            guard let url = components?.url else {
+//                throw NetworkError.badURL
+//            }
+//            request = URLRequest(url: url)
+//        }
+//        
+//        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+//        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+//        
+//        let session = URLSession.shared
+//        
+//        let (data, response) = try await session.data(for: request)
+//        
+//        if let json = try? JSONSerialization.jsonObject(with: data, options: .mutableContainers),
+//           let jsonData = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted) {
+//            print(String(decoding: jsonData, as: UTF8.self))
+//        } else {
+//            print("json data malformed")
+//        }
+//        
+//        guard let httpResponse = response as? HTTPURLResponse,
+//              httpResponse.statusCode == 200 else {
+//            throw NetworkError.invalidResponse
+//            
+//            return .failure(NetworkError.invalidResponse)
+//        }
+//        
+//        guard let result = try? JSONDecoder().decode(T.self, from: data) else {
+//            throw NetworkError.decodingError
+//        }
+//        
+//        return result
+//        return .success(result)
+//    }
 }

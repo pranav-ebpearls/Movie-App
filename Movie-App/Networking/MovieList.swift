@@ -9,7 +9,7 @@ import Foundation
 
 struct MovieListResult: Codable {
     var page: Int
-    var totalPages: Int
+    var totalPages: Int?
     var totalResults: Int
     var results: [Movie]
     
@@ -35,5 +35,3 @@ struct Movie: Codable {
         case genreIds = "genre_ids"
     }
 }
-
-

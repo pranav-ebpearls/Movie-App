@@ -10,9 +10,7 @@ import UIKit
 class ProfileViewController: UIViewController {
     
     // MARK: - Properties
-    
-//    let accountData = AccountData()
-    
+        
     var avat: Avatar?
     var movieDB: ImgPath?
     
